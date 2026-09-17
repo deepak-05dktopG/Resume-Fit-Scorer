@@ -59,5 +59,6 @@ Under development
 - FastAPI application with basic title and description.
 - `GET /health` endpoint returning the service status.
 - Environment-based settings for the Groq API key and LLM configuration.
+- PDF and UTF-8 TXT document parsing with controlled errors for unsupported, empty, invalid, or unreadable documents.
 
-Resume parsing, job-description extraction, LLM calls, and scoring will be added incrementally in later steps.
+The parser extracts PDF text from every page and marks PDFs with fewer than 50 non-whitespace characters as unreadable. Resume parsing is currently limited to document text extraction; job-description extraction, LLM calls, and scoring will be added incrementally in later steps.
