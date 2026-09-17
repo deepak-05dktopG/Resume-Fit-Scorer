@@ -2,7 +2,8 @@ import json
 
 from pydantic import ValidationError
 
-from app.models import Criterion, CriterionScore, CriterionScoringResult
+from app.config import ScoringWeights, load_scoring_config
+from app.models import Criterion, CriterionScore, CriterionScoringResult, OverallAssessment
 from app.services.llm_client import GroqLLMClient, LLMClientError
 
 
@@ -93,3 +94,55 @@ Return ONLY JSON. Do not include markdown fences."""
 		raise ScoringError("The LLM returned a score for the wrong criterion.")
 
 	return score
+
+
+def calculate_overall_score(
+	criterion_scores: list[CriterionScore],
+	criteria: list[Criterion],
+	weights: ScoringWeights | None = None,
+) -> OverallAssessment:
+	"""Calculate a deterministic weighted score from validated criterion scores."""
+
+	if not criteria:
+		raise ScoringError("Criteria cannot be empty.")
+
+	configured_weights = weights or load_scoring_config().weights
+	criteria_by_id: dict[str, Criterion] = {}
+	for criterion in criteria:
+		if criterion.id in criteria_by_id:
+			raise ScoringError("Criteria contain a duplicate criterion ID.")
+		criteria_by_id[criterion.id] = criterion
+
+	scores_by_id: dict[str, CriterionScore] = {}
+	for criterion_score in criterion_scores:
+		if criterion_score.criterion_id in scores_by_id:
+			raise ScoringError("Criterion scores contain a duplicate criterion ID.")
+		if criterion_score.criterion_id not in criteria_by_id:
+			raise ScoringError("Criterion scores contain an unknown criterion ID.")
+		scores_by_id[criterion_score.criterion_id] = criterion_score
+
+	missing_ids = set(criteria_by_id) - set(scores_by_id)
+	if missing_ids:
+		raise ScoringError("Criterion scores are missing one or more criteria.")
+
+	weight_by_importance = {
+		"required": configured_weights.required,
+		"preferred": configured_weights.preferred,
+	}
+	total_weight = 0.0
+	weighted_score = 0.0
+	for criterion in criteria:
+		weight = weight_by_importance.get(criterion.importance.value)
+		if weight is None or weight < 0:
+			raise ScoringError("Criterion importance has no valid configured weight.")
+		total_weight += weight
+		weighted_score += (scores_by_id[criterion.id].score / 4) * weight
+
+	if total_weight == 0:
+		raise ScoringError("Total applicable scoring weight must be greater than zero.")
+
+	overall_score = round((weighted_score / total_weight) * 100, 2)
+	return OverallAssessment(
+		overall_score=overall_score,
+		criterion_scores=[scores_by_id[criterion.id] for criterion in criteria],
+	)

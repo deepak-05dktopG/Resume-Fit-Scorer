@@ -35,3 +35,8 @@ class CriterionScore(BaseModel):
 
 class CriterionScoringResult(BaseModel):
 	scores: list[CriterionScore]
+
+
+class OverallAssessment(BaseModel):
+	overall_score: float = Field(ge=0, le=100)
+	criterion_scores: list[CriterionScore]

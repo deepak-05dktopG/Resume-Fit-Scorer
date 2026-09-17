@@ -63,5 +63,6 @@ Under development
 - LLM-based job-description criterion extraction with Pydantic validation of the structured response.
 - Criterion-level resume scoring using a 0-4 evidence-based rubric.
 - Pydantic validation of scoring output and explicit handling of LLM failures or malformed output.
+- Deterministic Python overall scoring using configurable required/preferred weights.
 
-The parser extracts PDF text from every page and marks PDFs with fewer than 50 non-whitespace characters as unreadable. Criteria extraction asks Groq's configured Llama model for explicit required and preferred criteria and rejects malformed or invalid structured output. Resume scoring evaluates each criterion independently; overall scoring and weighting will be added incrementally in later steps.
+The parser extracts PDF text from every page and marks PDFs with fewer than 50 non-whitespace characters as unreadable. Criteria extraction asks Groq's configured Llama model for explicit required and preferred criteria and rejects malformed or invalid structured output. Resume scoring evaluates each criterion independently. The final score is calculated in Python using weights from `config/scoring.yaml`; the LLM does not calculate it. Current example weights are `required: 2.0` and `preferred: 1.0`. Calibration is not complete yet.

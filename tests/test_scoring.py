@@ -2,11 +2,16 @@ from unittest.mock import Mock
 
 import pytest
 
-from app.models import Criterion, CriterionImportance
+from app.config import ScoringWeights, load_scoring_config
+from app.models import Criterion, CriterionImportance, CriterionScore
 from app.services import criteria_extractor
 from app.services.criteria_extractor import CriteriaExtractionError, extract_criteria
 from app.services import scorer
-from app.services.scorer import ScoringError, score_resume_against_criteria
+from app.services.scorer import (
+	ScoringError,
+	calculate_overall_score,
+	score_resume_against_criteria,
+)
 
 
 JOB_DESCRIPTION = "We need a Python engineer with FastAPI experience. Communication skills are preferred."
@@ -216,3 +221,118 @@ def test_scoring_prompt_contains_criterion_resume_rubric_and_constraints(
 	assert "4 = Direct / highly relevant evidence" in user_prompt
 	assert "Do not infer unsupported skills" in system_prompt
 	assert "Return ONLY JSON" in user_prompt
+
+
+def _criterion_score(criterion_id: str, score: int) -> CriterionScore:
+	return CriterionScore(
+		criterion_id=criterion_id,
+		score=score,
+		evidence=["Resume evidence"],
+		reasoning="Validated reasoning.",
+	)
+
+
+def test_overall_score_is_100_when_all_criteria_score_4() -> None:
+	result = calculate_overall_score(
+		[_criterion_score("python", 4), _criterion_score("fastapi", 4)],
+		[PYTHON_CRITERION, FASTAPI_CRITERION],
+	)
+
+	assert result.overall_score == 100.0
+
+
+def test_overall_score_is_0_when_all_criteria_score_0() -> None:
+	result = calculate_overall_score(
+		[_criterion_score("python", 0), _criterion_score("fastapi", 0)],
+		[PYTHON_CRITERION, FASTAPI_CRITERION],
+	)
+
+	assert result.overall_score == 0.0
+
+
+def test_overall_score_uses_required_and_preferred_weights() -> None:
+	criteria = [
+		PYTHON_CRITERION,
+		Criterion(
+			id="rest_api",
+			name="REST APIs",
+			description="Experience developing REST APIs",
+			importance="required",
+		),
+		Criterion(
+			id="communication",
+			name="Communication",
+			description="Clear communication",
+			importance="preferred",
+		),
+	]
+	result = calculate_overall_score(
+		[
+			_criterion_score("python", 4),
+			_criterion_score("rest_api", 2),
+			_criterion_score("communication", 4),
+		],
+		criteria,
+		ScoringWeights(required=2.0, preferred=1.0),
+	)
+
+	assert result.overall_score == 80.0
+
+
+def test_changing_configured_weight_changes_result() -> None:
+	criteria = [PYTHON_CRITERION, FASTAPI_CRITERION]
+	scores = [_criterion_score("python", 4), _criterion_score("fastapi", 0)]
+
+	default_result = calculate_overall_score(scores, criteria, load_scoring_config().weights)
+	changed_result = calculate_overall_score(
+		scores,
+		criteria,
+		ScoringWeights(required=3.0, preferred=1.0),
+	)
+
+	assert default_result.overall_score == 66.67
+	assert changed_result.overall_score == 75.0
+
+
+def test_overall_score_rejects_missing_criterion_score() -> None:
+	with pytest.raises(ScoringError, match="missing"):
+		calculate_overall_score([_criterion_score("python", 4)], [PYTHON_CRITERION, FASTAPI_CRITERION])
+
+
+def test_overall_score_rejects_unknown_criterion_id() -> None:
+	with pytest.raises(ScoringError, match="unknown"):
+		calculate_overall_score(
+			[_criterion_score("unknown", 4)],
+			[PYTHON_CRITERION],
+		)
+
+
+def test_overall_score_rejects_duplicate_criterion_score() -> None:
+	with pytest.raises(ScoringError, match="duplicate"):
+		calculate_overall_score(
+			[_criterion_score("python", 4), _criterion_score("python", 3)],
+			[PYTHON_CRITERION],
+		)
+
+
+def test_overall_score_rejects_zero_total_weight() -> None:
+	with pytest.raises(ScoringError, match="greater than zero"):
+		calculate_overall_score(
+			[_criterion_score("python", 4)],
+			[PYTHON_CRITERION],
+			ScoringWeights(required=0.0, preferred=0.0),
+		)
+
+
+def test_criterion_score_rejects_score_outside_range() -> None:
+	with pytest.raises(ValueError):
+		_criterion_score("python", 5)
+
+
+def test_overall_score_rounds_to_two_decimal_places() -> None:
+	result = calculate_overall_score(
+		[_criterion_score("python", 1), _criterion_score("fastapi", 2)],
+		[PYTHON_CRITERION, FASTAPI_CRITERION],
+	)
+
+	assert result.overall_score == 33.33
