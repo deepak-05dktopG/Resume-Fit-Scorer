@@ -40,3 +40,17 @@ class CriterionScoringResult(BaseModel):
 class OverallAssessment(BaseModel):
 	overall_score: float = Field(ge=0, le=100)
 	criterion_scores: list[CriterionScore]
+
+
+class CriterionAssessment(BaseModel):
+	id: str
+	name: str
+	importance: CriterionImportance
+	score: int = Field(strict=True, ge=0, le=4)
+	evidence: list[str]
+	reasoning: str = Field(min_length=1)
+
+
+class AnswerResponse(BaseModel):
+	overall_score: float = Field(ge=0, le=100)
+	criteria: list[CriterionAssessment]

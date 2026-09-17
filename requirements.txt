@@ -8,3 +8,4 @@ PyMuPDF
 PyYAML
 pytest
 httpx
+python-multipart
