@@ -1,0 +1,25 @@
+Riley Chen
+riley.chen@example.test | Synthetic sample candidate
+
+Summary
+Application support specialist transitioning toward software engineering. Experienced with automation, troubleshooting, and collaborative delivery, with limited professional experience developing backend services.
+
+Skills
+JavaScript, Bash, basic Python, SQL, Git, Jira, technical documentation
+
+Experience
+Application Support Specialist, Maple Health Tools, 2022-2025
+- Diagnosed customer issues, reproduced defects, and coordinated fixes with engineering teams.
+- Wrote Bash and Python scripts to automate log collection and routine support checks.
+- Documented incident timelines and explained technical issues to customer success teams.
+
+Technical Operations Intern, River Labs, 2021-2022
+- Maintained test data and assisted with release checklists for an internal web application.
+- Used SQL queries and spreadsheets to investigate data quality issues.
+
+Projects
+- Personal task tracker: built a small JavaScript application with local storage and basic filtering.
+- Learning project: followed a Python web development course and created a simple command-line notes tool.
+
+Education
+Certificate in Software Development, Example Technical Institute, 2021

@@ -1,0 +1,26 @@
+Alex Morgan
+alex.morgan@example.test | Synthetic sample candidate
+
+Summary
+Backend engineer with 6 years of experience building production APIs and data services. Strong background in Python, FastAPI, REST API design, testing, and communicating technical decisions across engineering and product teams.
+
+Skills
+Python, FastAPI, Django, REST APIs, PostgreSQL, Redis, Docker, pytest, Git, AWS
+
+Experience
+Senior Backend Engineer, Northstar Analytics, 2021-2025
+- Designed and maintained Python services using FastAPI and PostgreSQL for a multi-tenant analytics platform.
+- Built versioned REST APIs, authentication middleware, background jobs, and automated pytest coverage.
+- Led API design reviews and wrote concise architecture notes for product, support, and engineering partners.
+
+Backend Engineer, Harbor Systems, 2019-2021
+- Developed Python web services and integrations used by internal operations teams.
+- Improved API response times through query tuning, caching, and structured monitoring.
+- Presented delivery plans and incident findings to technical and non-technical stakeholders.
+
+Projects
+- Open-source inventory API: created a FastAPI service with REST endpoints, validation, pagination, and tests.
+- Event processing demo: built a Python worker that consumes events and stores results in PostgreSQL.
+
+Education
+B.S. in Computer Science, Example State University, 2019

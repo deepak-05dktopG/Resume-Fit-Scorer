@@ -1,0 +1,25 @@
+Jamie Patel
+jamie.patel@example.test | Synthetic sample candidate
+
+Summary
+Software engineer with 4 years of experience delivering Python applications and internal services. Comfortable collaborating with product teams and maintaining web APIs, with less experience owning large production platforms.
+
+Skills
+Python, Flask, Django, REST APIs, PostgreSQL, JavaScript, Git, pytest
+
+Experience
+Software Engineer, Cedar Commerce, 2022-2025
+- Implemented Python features for order and reporting services used by internal operations.
+- Added REST endpoints and integration tests to a Flask application backed by PostgreSQL.
+- Worked with designers and analysts to clarify requirements and document release changes.
+
+Associate Software Engineer, Bright Desk, 2021-2022
+- Maintained Python automation scripts and small web tools for customer support workflows.
+- Investigated defects, reviewed pull requests, and communicated fixes during weekly planning.
+
+Projects
+- Team scheduling tool: built a Flask API and lightweight web interface for shift requests.
+- Data cleanup utility: created a Python command-line tool for validating CSV exports.
+
+Education
+B.A. in Information Systems, Example City College, 2021
