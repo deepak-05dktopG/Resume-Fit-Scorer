@@ -24,3 +24,14 @@ class Criterion(BaseModel):
 
 class CriteriaExtraction(BaseModel):
 	criteria: list[Criterion]
+
+
+class CriterionScore(BaseModel):
+	criterion_id: str = Field(min_length=1)
+	score: int = Field(strict=True, ge=0, le=4)
+	evidence: list[str]
+	reasoning: str = Field(min_length=1)
+
+
+class CriterionScoringResult(BaseModel):
+	scores: list[CriterionScore]

@@ -61,5 +61,7 @@ Under development
 - Environment-based settings for the Groq API key and LLM configuration.
 - PDF and UTF-8 TXT document parsing with controlled errors for unsupported, empty, invalid, or unreadable documents.
 - LLM-based job-description criterion extraction with Pydantic validation of the structured response.
+- Criterion-level resume scoring using a 0-4 evidence-based rubric.
+- Pydantic validation of scoring output and explicit handling of LLM failures or malformed output.
 
-The parser extracts PDF text from every page and marks PDFs with fewer than 50 non-whitespace characters as unreadable. Criteria extraction asks Groq's configured Llama model for explicit required and preferred criteria and rejects malformed or invalid structured output. Resume scoring will be added incrementally in later steps.
+The parser extracts PDF text from every page and marks PDFs with fewer than 50 non-whitespace characters as unreadable. Criteria extraction asks Groq's configured Llama model for explicit required and preferred criteria and rejects malformed or invalid structured output. Resume scoring evaluates each criterion independently; overall scoring and weighting will be added incrementally in later steps.
