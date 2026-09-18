@@ -10,6 +10,12 @@ The project is a focused applied-AI system for an AI Engineer / Forward Deployed
 
 Working prototype
 
+## Walkthrough Video
+
+A 5-minute walkthrough demonstrating the working API, an unseen input, the scoring implementation, and the LLM prompt used in the system.
+
+[Watch the Walkthrough Video on Google Drive](https://drive.google.com/file/d/1mxMTf8YuEUN_9lLnWNdYDn9tEixKig2U/view?usp=sharing)
+
 ## Architecture / Pipeline
 
 1. `POST /answer` receives a job description and a PDF or TXT resume.
